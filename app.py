@@ -9,10 +9,11 @@ from youtube import fetch_and_store_videos
 from config import Config
 from flask_migrate import Migrate
 
-migrate= Migrate(app,db)
+
 app = Flask(__name__)
 app.config.from_object(Config)
 db.init_app(app)
+migrate= Migrate(app,db)
 
 scheduler = BackgroundScheduler()
 scheduler.start()
@@ -34,7 +35,7 @@ atexit.register(lambda: scheduler.shutdown())
 def get_videos():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
-    videos = Video.query.order_by(Video.publish_datetime.desc()).paginate(page, per_page, error_out=False)
+    videos = Video.query.order_by(Video.publish_datetime.desc()).paginate(page=page, per_page=per_page, error_out=False)
     return jsonify({
         'videos': [
             {
